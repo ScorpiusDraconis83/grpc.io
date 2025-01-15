@@ -4,7 +4,7 @@ description: >-
   Explains how custom load balancing policies can help optimize load balancing
   under unique circumstances.
 ---
-
+{{< youtube id="G6PRjmXuBG8" class="youtube-video" title="Load Balancing in gRPC" >}}
 ### Overview
 
 One of the key features of gRPC is load balancing, which allows requests from
@@ -24,7 +24,7 @@ uses the first one it can connect to. By updating the gRPC service config you
 can also switch to using `round_robin` that connects to every address it gets
 and rotates through the connected backends for each RPC. There are also some
 other load balancing policies available, but the exact set varies by language.
-If the built-in policies do not meet your needs you can also implement you own
+If the built-in policies do not meet your needs you can also implement your own
 custom policy.
 
 This involves implementing a load balancer interface in the language you are
@@ -56,14 +56,14 @@ P --> |Picks one| SC
 
 ### Backend Metrics
 
-What if your load balancing policy needs to know what is going on with the
-backend servers in real-time? For this you can rely on backend metrics. You can
+What if your load balancing policy needs real-time information about the 
+backend servers? For this you can rely on backend metrics. You can
 have metrics provided to you either in-band, in the backend RPC responses, or
-out-of-band as separate RPCs from the backends. Standard metrics like CPU
-and memory utilization are provided but you can also implement your own, custom
-metrics.
+out-of-band as separate RPCs from the backends. Standard metrics like 
+CPU and memory utilization are provided, but you can also implement 
+your own custom metrics.
 
-For more information on this, please see the custom backend metrics guide (TBD)
+For more information on this, please see the custom backend metrics [guide][custom backend metrics guide]
 
 ### Service Mesh
 
@@ -81,8 +81,10 @@ For more details, please see gRPC [proposal A52].
 | Language | Example        | Notes                            |
 |----------|----------------|----------------------------------|
 | Java     | [Java example] |                                  |
-| Go       |                | Example and xDS support upcoming |
+| Go       | [Go example]   |                                  |
 | C++      |                | Not yet supported                |
 
 [proposal A52]:https://github.com/grpc/proposal/blob/master/A52-xds-custom-lb-policies.md
 [Java example]: https://github.com/grpc/grpc-java/tree/master/examples/src/main/java/io/grpc/examples/customloadbalance 
+[Go example]: https://github.com/grpc/grpc-go/tree/master/examples/features/customloadbalancer
+[custom backend metrics guide]: /docs/guides/custom-backend-metrics/

@@ -3,8 +3,8 @@ title: Quick start
 description: This guide gets you started with gRPC in C++ with a simple working example.
 weight: 10
 spelling: cSpell:ignore autoconf automake cmake cout DCMAKE endl libtool mkdir popd pushd
-cmake-min-version: 3.13
-cmake-version: 3.19.6
+cmake-min-version: 3.16
+cmake-version: 3.30.3
 ---
 
 In the C++ world, there's no universally accepted standard for managing project
@@ -23,37 +23,63 @@ Choose a directory to hold locally installed packages. This page assumes that
 the environment variable `MY_INSTALL_DIR` holds this directory path. For
 example:
 
+- Linux / macOS
+
 ```sh
-$ export MY_INSTALL_DIR=$HOME/.local
+export MY_INSTALL_DIR=$HOME/.local
 ```
 
 Ensure that the directory exists:
 
 ```sh
-$ mkdir -p $MY_INSTALL_DIR
+mkdir -p $MY_INSTALL_DIR
 ```
 
 Add the local `bin` folder to your path variable, for example:
 
 ```sh
-$ export PATH="$MY_INSTALL_DIR/bin:$PATH"
+export PATH="$MY_INSTALL_DIR/bin:$PATH"
+```
+
+- Windows
+
+```powershell
+set MY_INSTALL_DIR=%USERPROFILE%\cmake
+```
+
+Ensure that the directory exists:
+
+```powershell
+mkdir %INSTALL_DIR%
+```
+
+Add the local `bin` folder to your path variable, for example:
+
+```powershell
+set PATH=%PATH%;$MY_INSTALL_DIR\bin
 ```
 
 #### Install cmake
 
 You need version {{< param cmake-min-version >}} or later of `cmake`. Install it by
-following these instructions:
+following these instructions if you don't have it:
 
 - Linux
 
   ```sh
-  $ sudo apt install -y cmake
+  sudo apt install -y cmake
   ```
 
 - macOS:
 
   ```sh
-  $ brew install cmake
+  brew install cmake
+  ```
+
+- Windows:
+
+  ```sh
+  choco install cmake
   ```
 
 - For general `cmake` installation instructions, see [Installing CMake][].
@@ -61,7 +87,7 @@ following these instructions:
 Check the version of `cmake`:
 
 ```sh
-$ cmake --version
+cmake --version
 cmake version {{< param cmake-version >}}
 ```
 
@@ -70,9 +96,9 @@ can install a more recent version into your local installation directory as
 follows:
 
 ```sh
-$ wget -q -O cmake-linux.sh https://github.com/Kitware/CMake/releases/download/v{{< param cmake-version >}}/cmake-{{< param cmake-version >}}-Linux-x86_64.sh
-$ sh cmake-linux.sh -- --skip-license --prefix=$MY_INSTALL_DIR
-$ rm cmake-linux.sh
+wget -q -O cmake-linux.sh https://github.com/Kitware/CMake/releases/download/v{{< param cmake-version >}}/cmake-{{< param cmake-version >}}-linux-x86_64.sh
+sh cmake-linux.sh -- --skip-license --prefix=$MY_INSTALL_DIR
+rm cmake-linux.sh
 ```
 
 #### Install other required tools
@@ -82,13 +108,13 @@ Install the basic tools required to build gRPC:
 - Linux
 
   ```sh
-  $ sudo apt install -y build-essential autoconf libtool pkg-config
+  sudo apt install -y build-essential autoconf libtool pkg-config
   ```
 
 - macOS:
 
   ```sh
-  $ brew install autoconf automake libtool pkg-config
+  brew install autoconf automake libtool pkg-config
   ```
 
 #### Clone the `grpc` repo
@@ -96,7 +122,7 @@ Install the basic tools required to build gRPC:
 Clone the `grpc` repo and its submodules:
 
 ```sh
-$ git clone --recurse-submodules -b {{< param grpc_vers.core >}} --depth 1 --shallow-submodules https://github.com/grpc/grpc
+git clone --recurse-submodules -b {{< param grpc_vers.core >}} --depth 1 --shallow-submodules https://github.com/grpc/grpc
 ```
 #### Build and install gRPC and Protocol Buffers
 
@@ -106,18 +132,31 @@ for service definitions and data serialization, and the example code uses
 
 The following commands build and locally install gRPC and Protocol Buffers:
 
-```sh
-$ cd grpc
-$ mkdir -p cmake/build
-$ pushd cmake/build
-$ cmake -DgRPC_INSTALL=ON \
-      -DgRPC_BUILD_TESTS=OFF \
-      -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR \
-      ../..
-$ make -j 4
-$ make install
-$ popd
-```
+- Linux & macOS
+
+  ```sh
+  cd grpc
+  mkdir -p cmake/build
+  pushd cmake/build
+  cmake -DgRPC_INSTALL=ON \
+        -DgRPC_BUILD_TESTS=OFF \
+        -DCMAKE_CXX_STANDARD=17 \
+        -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR \
+        ../..
+  make -j 4
+  make install
+  popd
+  ```
+
+- Windows
+
+  ```powershell
+  mkdir "cmake\build"
+  pushd "cmake\build"
+  cmake -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DCMAKE_CXX_STANDARD=17 -DCMAKE_INSTALL_PREFIX=%MY_INSTALL_DIR% ..\..
+  cmake --build . --config Release --target install -j 4
+  popd
+  ```
 
 {{% alert title="Important" color="warning" %}}
   We **strongly** encourage you to install gRPC _locally_ &mdash; using an
@@ -140,17 +179,29 @@ the steps of the previous section.
  1. Change to the example's directory:
 
     ```sh
-    $ cd examples/cpp/helloworld
+    cd examples/cpp/helloworld
     ```
 
  2. Build the example using `cmake`:
 
-    ```sh
-    $ mkdir -p cmake/build
-    $ pushd cmake/build
-    $ cmake -DCMAKE_PREFIX_PATH=$MY_INSTALL_DIR ../..
-    $ make -j 4
-    ```
+    - Linux & macOS
+
+      ```sh
+      mkdir -p cmake/build
+      pushd cmake/build
+      cmake -DCMAKE_PREFIX_PATH=$MY_INSTALL_DIR ../..
+      make -j 4
+      ```
+
+    - Windows
+
+      ```powershell
+      mkdir "cmake\build"
+      pushd "cmake\build"
+      cmake -DCMAKE_INSTALL_PREFIX=%MY_INSTALL_DIR% ..\..
+      cmake --build . --config Release -j 4
+      popd
+      ```
 
     {{% alert title="Note" color="info" %}}
   **Getting build failures?** Most issues, at this point, are the result of a
@@ -166,13 +217,13 @@ Run the example from the example **build** directory
  1. Run the server:
 
     ```sh
-    $ ./greeter_server
+    ./greeter_server
     ```
 
  1. From a different terminal, run the client and see the client output:
 
     ```sh
-    $ ./greeter_client
+    ./greeter_client
     Greeter received: Hello world
     ```
 
@@ -239,8 +290,16 @@ proto file.
 
 From the example **build** directory `examples/cpp/helloworld/cmake/build`, run:
 
-```sh
-$ make -j 4
+- Linux & macOS
+
+```powershell
+make -j 4
+```
+
+- Windows
+
+```powershell
+cmake --build . --config Release -j 4
 ```
 
 This regenerates `helloworld.pb.{h,cc}` and `helloworld.grpc.pb.{h,cc}`, which
@@ -329,20 +388,26 @@ from the example **build** directory `examples/cpp/helloworld/cmake/build`:
 
  1. Build the client and server after having made changes:
 
+    - Linux & macOS
     ```sh
-    $ make -j 4
+    make -j 4
+    ```
+
+    - Windows
+    ```powershell
+    cmake --build . --config Release -j 4
     ```
 
  2. Run the server:
 
     ```sh
-    $ ./greeter_server
+    ./greeter_server
     ```
 
  3. On a different terminal, run the client:
 
     ```sh
-    $ ./greeter_client
+    ./greeter_client
     ```
 
     You'll see the following output:

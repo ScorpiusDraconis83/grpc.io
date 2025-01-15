@@ -12,6 +12,8 @@ interchange format. If you’re new to gRPC and/or protocol buffers, read this!
 If you just want to dive in and see gRPC in action first,
 [select a language](/docs/languages/) and try its **Quick start**.
 
+{{< youtube id="njC24ts24Pg" class="youtube-video" title="gRPC in 5 minutes" >}}
+
 ## Overview
 
 In gRPC, a client application can directly call a method on a server application

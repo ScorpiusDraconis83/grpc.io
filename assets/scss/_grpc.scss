@@ -44,6 +44,11 @@ sections site wide to the original site's background svg.
   display: none;
 }
 
+// use variable for navbar z-index as banner z-index depends on it
+.td-navbar {
+  z-index: $navbar-z-index;
+}
+
 // This adds rounded corners to the search inputs, since a Docsy
 // flag affecting these and other elements has been disabled.
 .td-search-input {
@@ -119,6 +124,11 @@ sections site wide to the original site's background svg.
   max-width: 1140px;
 }
 
+// Without this the tables can have horribly narrow columns
+.td-content table {
+  word-break: normal;
+}
+
 /* To ensure that the top page header and description are rendered
 above the inline ToC, this hides them from displaying in the main
 content block */
@@ -141,6 +151,32 @@ body:not(.td-blog) .td-content:not(.list-page) {
 @include media-breakpoint-up(lg) {
   .td-content figure {
     max-width: 80%;
+  }
+}
+
+// Render the bash $ prefix indicator to enable easier copy of cli commands
+.td-content div.highlight pre {
+  padding-left: 0.5rem;
+  code.language-sh:before {
+    content: "$";
+    margin-left: 0.5rem;
+  }
+  code.language-sh span {
+    display: inline !important;
+    margin-left: 0.25rem;
+  }
+}
+
+// Render the powershell > prefix indicator to enable easier copy of cli commands
+.td-content div.highlight pre {
+  padding-left: 0.5rem;
+  code.language-powershell:before {
+    content: ">";
+    margin-left: 0.5rem;
+  }
+  code.language-powershell span {
+    display: inline !important;
+    margin-left: 0.25rem;
   }
 }
 
@@ -224,16 +260,24 @@ c - Component (Aware of its content/context...)
 // Object
 .o-banner {
   width: 100%;
-  position: fixed;
-  margin-left: -15px;
+  position: relative;
   padding-top: 15px;
-  z-index: 32;
+  // keep banner's z-index value less than the navbar, so that banner moves beneath the navbar when user scrolls the page
+  z-index: $navbar-z-index - 1;
   top: 4rem;
   background: $light;
   text-align: center;
 
   & p {
     padding: 0.5rem;
+  }
+  padding-bottom: 0.01rem;
+}
+
+// Ensure no empty space left when navbar changes it's position from fixed to relative on small screens
+@include media-breakpoint-down(sm){
+  .o-banner{
+    top: 0rem;
   }
 }
 
@@ -440,3 +484,37 @@ c - Component (Aware of its content/context...)
     display: none;
   }
 }
+
+.youtube-video {
+  position: relative;
+  width: 100%; 
+  padding-bottom: 46%; 
+}
+
+.youtube-video iframe {
+  position: absolute;
+  width: 80%; 
+  height: 100%; 
+  border: 0; 
+}
+
+.youtube-video-center {
+  display: flex;
+  justify-content: center;
+}
+
+.youtube-video-center .video-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.youtube-video-center iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
